@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		html,body{
+			margin: 0;
+			padding: 0;	
+			overflow: hidden;
+		    user-select:none;
+		    -webkit-user-select:none;
+		    -moz-user-select:none;
+		    -ms-user-select:none;
+		}
+		.box{
+			width:40px;
+			height:40px;
+			background: pink;
+			position: absolute;
+			border-radius: 50%;
+		}
+
+	     .handle-ball{
+	     	z-index: 999999;
+	     }
+	</style>
+</head>
+<body>
+	<div class="box handle-ball"></div>
+	<script>
+		var ball=function(r,x,y,c,speedx,speedy){
+			this.width=r*2;
+			this.height=r*2;
+			this.x=x;
+			this.y=y;
+			this.r=r;
+			this.color=c;
+			this.speedx=speedx;
+			this.speedy=speedy;			
+			this.ele=document.createElement('div');	
+			document.body.appendChild(this.ele);
+			this.init();
+
+		}
+
+		ball.prototype = {
+			init:function(){				
+				this.move();
+				this.render();
+				this.winw=window.innerWidth;
+				this.winh=window.innerHeight;
+			},
+			render:function(){
+				this.ele.className="box";
+				this.ele.style.cssText="height:"+this.height+"px;width:"+this.width+"px;background:"+this.color+";left:"+this.x+"px;top:"+this.y+"px;";
+			},
+			move:function(){
+				var that=this;
+				window.setInterval(function(){
+
+					if(that.x<=0 || that.x>=that.winw-that.width) that.speedx=-that.speedx;
+					if(that.y<=0|| that.y>=that.winh-that.height) that.speedy=-that.speedy;
+
+					that.x+=that.speedx;
+					that.y+=that.speedy;
+					that.render();
+				},20)
+				
+			}
+		};
+
+		
+		//随机数
+		function randNum(max,min){
+			return Math.floor(Math.random()*(max+1-min))+min;
+		}
+		//颜色
+		function randcolor(){
+			var arr=[0,1,2,3,4,5,6,'a','b','c','d','e','f'];
+			var str="#";
+			/*[1,2,3,4,5,6].forEach(function(value,index){
+				str+=arr[randNum(12,0)];
+			});*/
+			for(var i=0;i<6;i++){
+				str+=arr[randNum(12,0)];
+			}
+			console.log(str);
+			return str;
+		}
+		var ball1=new ball(randNum(40,10),100,50,'red',randNum(-3,3),randNum(-3,3));
+		 /* for(var i=0;i<20;i++){
+		  		new ball(randNum(40,10),randNum(0,800),randNum(0,500),randcolor(),randNum(-3,3),randNum(-3,3));
+		  }	*/
+		  function createBalls(a,b){
+			for(var i=0;i<10;i++){
+			new ball(randNum(40,10),a,b,randcolor(),randNum(-3,3),randNum(-3,3));
+		    }
+		}
+
+		  var hb=document.querySelector(".handle-ball"),
+		  	initX,initY,moveX,moveY,flag=false;
+		  hb.addEventListener('mousedown',function(e){
+		  	var e= e || window.event;
+		  	initX=e.x;
+		  	initY=e.y;
+		  	flag=!0;
+		  },false)
+		  document.addEventListener('mousemove',function(e){
+		  	console.log(e);
+		  	if(flag){
+		  		var e= e || window.event;
+		  		moveX=e.x;
+			  	moveY=e.y;
+			  	hb.style.cssText="left:"+(moveX-20)+"px;top:"+(moveY-20)+"px";
+		  	}
+		  	
+		  	
+		  		
+		  },false);
+
+		  document.addEventListener('mouseup',function(){
+		  	flag=!1;
+		  })
+
+		  document.addEventListener("mousedown",function(e){
+			if(e.target.className=='box handle-ball') return;
+			e= e || window.event;
+            //console.log(e.target);
+			var _x=e.x,_y=e.y;
+			createBalls(_x,_y);
+		})
+		document.addEventListener('keydown',function(e){
+			e=e||window.event;
+			//console.log(e.keyCode)
+			if(e.keyCode==13 ||e.keyCode==32){
+                createBalls(200,50);
+
+			}
+
+
+		},false)
+
+	</script>
+</body>
+</html>
